@@ -18,6 +18,12 @@ beforeAll(async () => {
   expectValidJwt(testUserAuthToken);
 });
 
+afterAll(async () => {
+  const logoutRes = await request(app)
+    .delete(`/api/auth`)
+    .set("Authorization", `Bearer ${testUserAuthToken}`);
+});
+
 test("login", async () => {
   const loginRes = await request(app).put("/api/auth").send(testUser);
   expect(loginRes.status).toBe(200);
@@ -26,6 +32,18 @@ test("login", async () => {
   const expectedUser = { ...testUser, roles: [{ role: "diner" }] };
   delete expectedUser.password;
   expect(loginRes.body.user).toMatchObject(expectedUser);
+});
+
+test("login nothing", async () => {
+  const loginRes = await request(app).put("/api/auth").send();
+  expect(loginRes.status).toBe(500);
+});
+
+test("login no password", async () => {
+  const loginRes = await request(app)
+    .put("/api/auth")
+    .send({ name: "pizza man", email: "no@a.com" });
+  expect(loginRes.status).toBe(404);
 });
 
 test("register test", async () => {
