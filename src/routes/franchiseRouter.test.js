@@ -1,5 +1,18 @@
 const request = require("supertest");
 const app = require("../service");
+const { Role, DB } = require("../database/database.js");
+
+function randomName() {
+  return Math.random().toString(36).substring(2, 12);
+}
+async function createAdminUser() {
+  let user = { password: "toomanysecrets", roles: [{ role: Role.Admin }] };
+  user.name = randomName();
+  user.email = user.name + "@admin.com";
+
+  user = await DB.addUser(user);
+  return { ...user, password: "toomanysecrets" };
+}
 
 if (process.env.VSCODE_INSPECTOR_OPTIONS) {
   jest.setTimeout(60 * 1000 * 5); // 5 minutes
@@ -8,16 +21,18 @@ if (process.env.VSCODE_INSPECTOR_OPTIONS) {
 let franchiseToken;
 
 beforeAll(async () => {
+  //make new admin user
+  const adminMan = await createAdminUser();
+
   const loginRes = await request(app)
     .put(`/api/auth`)
-    .send({ email: "a@jwt.com", password: "admin" });
+    .send({ email: adminMan.email, password: adminMan.password });
   //console.log(loginRes.body);
   franchiseToken = loginRes.body.token;
-  await new Promise((resolve) => setTimeout(resolve, 500));
 });
 
 afterAll(async () => {
-  const logoutRes = await request(app)
+  await request(app)
     .delete(`/api/auth`)
     .set("Authorization", `Bearer ${franchiseToken}`);
 });

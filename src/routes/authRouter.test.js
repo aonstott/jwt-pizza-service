@@ -19,7 +19,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  const logoutRes = await request(app)
+  await request(app)
     .delete(`/api/auth`)
     .set("Authorization", `Bearer ${testUserAuthToken}`);
 });
