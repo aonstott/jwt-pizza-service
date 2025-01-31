@@ -19,6 +19,7 @@ if (process.env.VSCODE_INSPECTOR_OPTIONS) {
 }
 
 let franchiseToken;
+let adminEmail;
 
 beforeAll(async () => {
   //make new admin user
@@ -29,6 +30,7 @@ beforeAll(async () => {
     .send({ email: adminMan.email, password: adminMan.password });
   //console.log(loginRes.body);
   franchiseToken = loginRes.body.token;
+  adminEmail = adminMan.email;
 });
 
 afterAll(async () => {
@@ -46,7 +48,7 @@ test("list franchises", async () => {
 test("create franchise", async () => {
   const listRes = await request(app)
     .post(`/api/franchise`)
-    .send(generateFranchise())
+    .send(generateFranchise(adminEmail))
     .set("Authorization", `Bearer ${franchiseToken}`);
   // console.log(listRes.body);
 
@@ -64,7 +66,7 @@ test("list user franchises", async () => {
 test("delete franchise", async () => {
   const createRes = await request(app)
     .post(`/api/franchise`)
-    .send(generateFranchise())
+    .send(generateFranchise(adminEmail))
     .set("Authorization", `Bearer ${franchiseToken}`);
 
   expect(createRes.status).toBe(200);
@@ -83,7 +85,7 @@ test("delete franchise", async () => {
 test("create and delete a store", async () => {
   const createRes = await request(app)
     .post(`/api/franchise`)
-    .send(generateFranchise())
+    .send(generateFranchise(adminEmail))
     .set("Authorization", `Bearer ${franchiseToken}`);
 
   expect(createRes.status).toBe(200);
@@ -105,9 +107,9 @@ test("create and delete a store", async () => {
   expect(deleteRes.status).toBe(200);
 });
 
-function generateFranchise() {
+function generateFranchise(adminEmail) {
   return {
     name: Math.random().toString(36).substring(2, 12),
-    admins: [{ email: "a@jwt.com" }],
+    admins: [{ email: adminEmail }],
   };
 }

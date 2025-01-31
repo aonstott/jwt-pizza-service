@@ -18,6 +18,7 @@ if (process.env.VSCODE_INSPECTOR_OPTIONS) {
 }
 
 let token2;
+let adminEmail2;
 
 beforeAll(async () => {
   const adminMan = await createAdminUser();
@@ -26,6 +27,7 @@ beforeAll(async () => {
     .send({ email: adminMan.email, password: adminMan.password });
   //console.log(loginRes.body);
   token2 = loginRes.body.token;
+  adminEmail2 = adminMan.email;
 });
 
 afterAll(async () => {
@@ -73,7 +75,7 @@ test("post order", async () => {
 
   const createRes = await request(app)
     .post(`/api/franchise`)
-    .send(generateFranchise())
+    .send(generateFranchise(adminEmail2))
     .set("Authorization", `Bearer ${token2}`);
 
   expect(createRes.status).toBe(200);
@@ -110,9 +112,9 @@ test("get orders", async () => {
   //console.log(listRes.body);
 });
 
-function generateFranchise() {
+function generateFranchise(adminUserEmail) {
   return {
     name: Math.random().toString(36).substring(2, 12),
-    admins: [{ email: "a@jwt.com" }],
+    admins: [{ email: adminUserEmail }],
   };
 }
