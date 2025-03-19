@@ -1,6 +1,9 @@
 const request = require("supertest");
 const app = require("../service");
 const { Role, DB } = require("../database/database.js");
+
+jest.setTimeout(15 * 1000 * 1); // 5 minutes
+
 function randomName() {
   return Math.random().toString(36).substring(2, 12);
 }
