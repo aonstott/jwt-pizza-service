@@ -1,4 +1,4 @@
-const { memoryUsage, send } = require("process");
+//const { memoryUsage, send } = require("process");
 const config = require("./config");
 const os = require("os");
 
@@ -83,7 +83,7 @@ function pizzaPurchaseHandler(pizzaItems, responseCode) {
   }
 }
 
-const timer = setInterval(() => {
+setInterval(() => {
   console.log("started");
   Object.keys(requests).forEach((method) => {
     //console.log(method);
