@@ -5,6 +5,8 @@ const franchiseRouter = require("./routes/franchiseRouter.js");
 const version = require("./version.json");
 const config = require("./config.js");
 const { requestTracker } = require("./metrics.js");
+const Logger = require("pizza-logger");
+const logger = new Logger(config);
 
 const app = express();
 app.use(express.json());
@@ -18,6 +20,7 @@ app.use((req, res, next) => {
 });
 //use metrics middleware
 app.use(requestTracker);
+app.use(logger.httpLogger);
 
 const apiRouter = express.Router();
 app.use("/api", apiRouter);
