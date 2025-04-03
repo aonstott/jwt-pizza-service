@@ -32,14 +32,14 @@ async function requestTracker(req, res, next) {
 
     res.on("finish", () => {
       if (meth == "PUT" && url == "/api/auth") {
-        console.log("STATUSCODE", res.statusCode);
+        //console.log("STATUSCODE", res.statusCode);
         if (res.statusCode >= 200 && res.statusCode < 300) {
           numAuthRequests++;
         } else {
           numFailedAuthRequests++;
         }
       } else if (meth == "POST" && url == "/api/order") {
-        console.log("PIZZA DETECTED");
+        //console.log("PIZZA DETECTED");
         pizzaPurchaseHandler(req.body.items, res.statusCode);
       }
       const [seconds, nanoseconds] = process.hrtime(startTime);
@@ -84,7 +84,7 @@ function pizzaPurchaseHandler(pizzaItems, responseCode) {
 }
 
 setInterval(() => {
-  console.log("started");
+  //console.log("started");
   Object.keys(requests).forEach((method) => {
     //console.log(method);
     //console.log(requests[method]);
@@ -92,10 +92,10 @@ setInterval(() => {
   });
   const memUsage = getMemoryUsagePercentage();
   const cpuUsage = getCpuUsagePercentage();
-  console.log("active users");
-  console.log(numActive);
-  console.log("num auth reqs");
-  console.log(numAuthRequests);
+  //console.log("active users");
+  //console.log(numActive);
+  //console.log("num auth reqs");
+  //console.log(numAuthRequests);
   sendMetricToGrafana("Memory", memUsage, {}, "gauge", "%", true);
   sendMetricToGrafana("CPU", cpuUsage, {}, "gauge", "%", true);
   sendMetricToGrafana("ActiveUsers", numActive, {}, "sum", "1");
@@ -107,8 +107,8 @@ setInterval(() => {
     "sum",
     "1"
   );
-  console.log("Num sold: ", numSold, "Rev: ", totalRev);
-  console.log("Failed Auth Reqs: ", numFailedAuthRequests);
+  //console.log("Num sold: ", numSold, "Rev: ", totalRev);
+  //console.log("Failed Auth Reqs: ", numFailedAuthRequests);
   sendMetricToGrafana("Pizzas Bought", numSold, {}, "sum", "1");
   sendMetricToGrafana("Revenue", totalRev, {}, "sum", "USD", true);
   sendMetricToGrafana("Purchase Failures", creationFailures, {}, "sum", "1");
@@ -124,7 +124,7 @@ setInterval(() => {
     );
   }
 
-  console.log("running");
+  //console.log("running");
   numActive = 0;
   userAuths = [];
   numReqs = 0;
@@ -190,9 +190,9 @@ function sendMetricToGrafana(
     .then((response) => {
       if (!response.ok) {
         console.error("Failed to push metrics data to Grafana");
-        console.log(response);
+        //console.log(response);
       } else {
-        console.log(`Pushed ${metricName}`);
+        //console.log(`Pushed ${metricName}`);
       }
     })
     .catch((error) => {
