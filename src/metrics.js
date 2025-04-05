@@ -49,9 +49,9 @@ async function requestTracker(req, res, next) {
     });
 
     const meth = req.method;
-    console.log(req.method);
+    //console.log(req.method);
     const url = req.url;
-    console.log(req.body);
+    //console.log(req.body);
 
     if ("authorization" in req.headers) {
       const auth = req.headers["authorization"];
