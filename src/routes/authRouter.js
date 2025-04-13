@@ -95,6 +95,11 @@ authRouter.post(
         .status(400)
         .json({ message: "name, email, and password are required" });
     }
+    if (await DB.emailExists(email)) {
+      return res
+        .status(400)
+        .json({ message: "email already exists, please sign in" });
+    }
     const user = await DB.addUser({
       name,
       email,

@@ -106,13 +106,33 @@ class DB {
     }
   }
 
+  async emailExists(email) {
+    const connection = await this.getConnection();
+    try {
+      const userResult = await this.query(
+        connection,
+        `SELECT * FROM user WHERE email=?`,
+        [email]
+      );
+      if (userResult.length > 0) {
+        return true;
+      }
+      return false;
+    } finally {
+      connection.end();
+    }
+  }
+
   async updateUser(userId, email, password) {
     const connection = await this.getConnection();
     try {
-      const params = [];
-      if (password) {
+      const fields = [];
+      const values = [];
+      /*if (password) {
         const hashedPassword = await bcrypt.hash(password, 10);
-        params.push(`password='${hashedPassword}'`);
+        //params.push(`password='${hashedPassword}'`);
+        params.push
+
       }
       if (email) {
         params.push(`email='${email}'`);
@@ -120,6 +140,22 @@ class DB {
       if (params.length > 0) {
         const query = `UPDATE user SET ${params.join(", ")} WHERE id=${userId}`;
         await this.query(connection, query);
+      } bad code gone */
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        fields.push("password = ?");
+        values.push(hashedPassword);
+      }
+
+      if (email) {
+        fields.push("email = ?");
+        values.push(email);
+      }
+
+      if (fields.length > 0) {
+        const query = `UPDATE user SET ${fields.join(", ")} WHERE id = ?`;
+        values.push(userId);
+        await this.query(connection, query, values); // use params!
       }
       return this.getUser(email, password);
     } finally {
